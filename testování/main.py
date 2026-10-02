@@ -7,7 +7,7 @@ class TestobsahujeJenPismena(unittest.TestCase):
     def test_jen_pismena(self):
             self.assertTrue(obsahuje_jen_pismena("Ahoj"))
 
-    def 
+    
 
 
 
