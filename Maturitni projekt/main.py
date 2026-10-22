@@ -1,8 +1,11 @@
 import sys
+import os
 import pygame
 import math
 
 pygame.init()
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Nastavení okna
 WIDTH, HEIGHT = 600, 800
@@ -15,17 +18,18 @@ BLUE = (0, 120, 215)
 RED = (200, 50, 50)
 BLACK = (0, 0, 0)
 
-# Větší font pro nadpis,ť ať je dobře vidět
 title_font = pygame.font.SysFont(None, 60)
 font = pygame.font.SysFont(None, 40)
 
 # --- NAČTENÍ POZADÍ ---
 try:
-    background = pygame.image.load("pozadi.png")
+    image_path = os.path.join(current_dir, "pozadi.png")
+    background = pygame.image.load(image_path)
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-except:
-    background = None
 
+except Exception as e:
+    print(f"Chyba při načítání: {e}")
+    background = None
 
 def draw_text(text, f, color, surface, x, y):
     textobj = f.render(text, True, color)
@@ -64,7 +68,7 @@ def main_menu():
         pygame.draw.rect(screen, BLUE, start_button)
         pygame.draw.rect(screen, RED, exit_button)
 
-        draw_text("SPUSTIT HRU", font, WHITE, screen, 215, 360)
+        draw_text("SPUSTIT HRU", font, WHITE, screen, 206, 360)
         draw_text("UKONČIT", font, WHITE, screen, 235, 460)
 
         # --- ZPRACOVÁNÍ UDÁLOSTÍ ---
