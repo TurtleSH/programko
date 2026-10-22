@@ -1,12 +1,13 @@
 import sys
 import pygame
+import math
 
 pygame.init()
 
 # Nastavení okna
 WIDTH, HEIGHT = 600, 800
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Icy Tower - Hlavní menu")
+pygame.display.set_caption("Icy Tower 2.0 - Hlavní menu")
 
 # Barvy
 WHITE = (255, 255, 255)
@@ -14,47 +15,75 @@ BLUE = (0, 120, 215)
 RED = (200, 50, 50)
 BLACK = (0, 0, 0)
 
+# Větší font pro nadpis,ť ať je dobře vidět
+title_font = pygame.font.SysFont(None, 60)
 font = pygame.font.SysFont(None, 40)
 
+# --- NAČTENÍ POZADÍ ---
+try:
+    background = pygame.image.load("pozadi.png")
+    background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+except:
+    background = None
 
-def draw_text(text, font, color, surface, x, y):
-  textobj = font.render(text, True, color)
-  textrect = textobj.get_rect()
-  textrect.topleft = (x, y)
-  surface.blit(textobj, textrect)
+
+def draw_text(text, f, color, surface, x, y):
+    textobj = f.render(text, True, color)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj, textrect)
 
 
 def main_menu():
-  while True:
-    screen.fill(WHITE)
-    draw_text("Ice Tower 2.0", font, BLACK, screen, 210, 150)
+    clock = pygame.time.Clock()
+    
+    while True:
+        # --- VYKRESLENÍ POZADÍ ---
+        if background:
+            screen.blit(background, (0, 0))
+        else:
+            screen.fill(WHITE)
 
-    # Tlačítka
-    start_button = pygame.Rect(200, 350, 200, 50)
-    exit_button = pygame.Rect(200, 450, 200, 50)
+        # --- POHYBLIVÝ NADPIS SE STÍNEM ---
+        tik = pygame.time.get_ticks() * 0.005
+        offset_y = math.sin(tik) * 10
+        
+        # Výpočet pozice, aby byl nadpis hezky uprostřed
+        text_x = 160
+        text_y = 100
+        
+        # 1. Černý stín
+        draw_text("Icy Tower 2.0", title_font, BLACK, screen, text_x + 3, text_y + int(offset_y) + 3)
+        # 2. Hlavní bílý text
+        draw_text("Icy Tower 2.0", title_font, WHITE, screen, text_x, text_y + int(offset_y))
 
-    pygame.draw.rect(screen, BLUE, start_button)
-    pygame.draw.rect(screen, RED, exit_button)
+        # --- TLAČÍTKA ---
+        start_button = pygame.Rect(200, 350, 200, 50)
+        exit_button = pygame.Rect(200, 450, 200, 50)
 
-    draw_text("SPUSTIT HRU", font, WHITE, screen, 210, 360)
-    draw_text("UKONČIT", font, WHITE, screen, 235, 460)
+        pygame.draw.rect(screen, BLUE, start_button)
+        pygame.draw.rect(screen, RED, exit_button)
 
-    click = False
-    for event in pygame.event.get():
-      if event.type == pygame.QUIT:
-        pygame.quit()
-        sys.exit()
-      if event.type == pygame.MOUSEBUTTONDOWN:
-        if event.button == 1:
-          pos = pygame.mouse.get_pos()
-          if start_button.collidepoint(pos):
-            print("Spouštím hru...")  
-          if exit_button.collidepoint(pos):
-            pygame.quit()
-            sys.exit()
+        draw_text("SPUSTIT HRU", font, WHITE, screen, 215, 360)
+        draw_text("UKONČIT", font, WHITE, screen, 235, 460)
 
-    pygame.display.update()
+        # --- ZPRACOVÁNÍ UDÁLOSTÍ ---
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    pos = pygame.mouse.get_pos()
+                    if start_button.collidepoint(pos):
+                        print("Spouštím hru...")  
+                    if exit_button.collidepoint(pos):
+                        pygame.quit()
+                        sys.exit()
+
+        pygame.display.update()
+        clock.tick(60)
 
 
 if __name__ == "__main__":
-  main_menu()
+    main_menu()
